@@ -1,5 +1,5 @@
 CREATE TABLE pessoa(
-	codigo_pessoa BIGINT PRIMARY KEY IDENTITY,
+	codigo_pessoa BIGINT PRIMARY KEY AUTO_INCREMENT,
 	nome VARCHAR(100) NOT NULL,
 	data_de_aniversario VARCHAR(10) NOT NULL,
 	tipo_sanguineo VARCHAR(3) NOT NULL,
