@@ -45,10 +45,19 @@ quarkus.flyway.schemas=${yourDatabase}
 
 ## <a name="run-application"></a>Executando a aplicação
 
+
 <h3>Windows</h3>
 
-- Abra um terminal na pasta CRUD-Quarkus/Api e digite: ./mvnw compile quarkus:dev
+- Abra um terminal na pasta CRUD-Quarkus/Api e digite: 
+
+```xml
+./mvnw compile quarkus:dev
+```
 
 <h3>Linux</h3>
 
-Abra um terminal na pasta CRUD-Quarkus/Api e digite: mvn compile quarkus:dev
+Abra um terminal na pasta CRUD-Quarkus/Api e digite: 
+
+```xml
+mvn compile quarkus:dev
+```
