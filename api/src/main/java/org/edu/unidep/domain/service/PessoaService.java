@@ -4,6 +4,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.edu.unidep.domain.exception.PessoaNaoEncontradaException;
 import org.edu.unidep.domain.model.Pessoa;
 import org.edu.unidep.domain.repository.PessoaRepository;
 
@@ -36,6 +37,7 @@ public class PessoaService {
 	}
 	
 	public Pessoa acharOuFalhar(Long id) {
-		return pessoaRepository.buscarPessoaPeloCodigo(id).get();
+		return pessoaRepository.buscarPessoaPeloCodigo(id)
+				.orElseThrow(()-> new PessoaNaoEncontradaException(id));
 	}
 }

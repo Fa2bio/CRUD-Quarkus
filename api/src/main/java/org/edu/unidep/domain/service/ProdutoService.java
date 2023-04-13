@@ -4,6 +4,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.edu.unidep.domain.exception.ProdutoNaoEncontradoException;
 import org.edu.unidep.domain.model.Produto;
 import org.edu.unidep.domain.repository.ProdutoRepository;
 
@@ -35,6 +36,7 @@ public class ProdutoService {
 	}
 	
 	public Produto acharOuFalhar(Long id) {
-		return produtoRepository.buscarPessoaPeloCodigo(id).get();
+		return produtoRepository.buscarPessoaPeloCodigo(id)
+				.orElseThrow(()-> new ProdutoNaoEncontradoException(id));
 	}
 }

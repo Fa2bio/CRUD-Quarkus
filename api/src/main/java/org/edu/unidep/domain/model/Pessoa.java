@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.validator.constraints.br.CPF;
 import org.wildfly.common.annotation.NotNull;
 
 @Entity
@@ -30,6 +31,11 @@ public class Pessoa {
 	@NotNull
 	@Column(name = "tipo_sanguineo", length = 3)
 	private String sangue;
+	
+	@NotNull
+	@Column(name = "cpf", length = 14)
+	@CPF
+	private String cpf;
 	
 	@Embedded
 	private Endereco endereco;
@@ -73,5 +79,13 @@ public class Pessoa {
 	public void setEndereco(Endereco endereco) {
 		this.endereco = endereco;
 	}
+
+	public String getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}	
 
 }

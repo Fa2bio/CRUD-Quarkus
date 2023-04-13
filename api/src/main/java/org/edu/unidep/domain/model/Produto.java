@@ -1,5 +1,7 @@
 package org.edu.unidep.domain.model;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,6 +31,17 @@ public class Produto {
 	@NotNull
 	@Column(name = "data_de_vencimento", length = 10)
 	private String dataVencimento;
+	
+	@NotNull
+	@Column(name = "total_de_vendas")
+	private Integer totalDeVendas;
+	
+	@NotNull
+	private BigDecimal preco;
+	
+	@NotNull
+	@Column(name = "total_em_estoque")
+	private Integer estoque;
 
 	public Long getId() {
 		return id;
@@ -61,4 +74,29 @@ public class Produto {
 	public void setDataVencimento(String dataVencimento) {
 		this.dataVencimento = dataVencimento;
 	}
+
+	public Integer getTotalDeVendas() {
+		return totalDeVendas;
+	}
+
+	public void setTotalDeVendas(Integer totalDeVendas) {
+		this.totalDeVendas = totalDeVendas;
+	}
+
+	public BigDecimal getPreco() {
+		return preco;
+	}
+
+	public void setPreco(BigDecimal preco) {
+		this.preco = preco;
+	}
+
+	public Integer getEstoque() {
+		return estoque;
+	}
+
+	public void setEstoque(Integer estoque) {
+		this.estoque = estoque;
+	}
+	
 }
