@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.edu.unidep.domain.exception.PessoaNaoEncontradaException;
 import org.edu.unidep.domain.model.Pessoa;
 import org.edu.unidep.domain.repository.PessoaRepository;
 import org.edu.unidep.domain.service.PessoaService;
@@ -32,6 +33,7 @@ public class PessoaController {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response listarPessoa() {
 		List<Pessoa> todasPessoas = pessoaRepository.listarPessoas();
+		if(todasPessoas.isEmpty()) return Response.status(Status.NO_CONTENT).build();
 		return Response.ok(todasPessoas).build();
 	}
 	
@@ -39,8 +41,13 @@ public class PessoaController {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response buscarPessoa(@PathParam("id") Long id) {
-		Pessoa pessoaEncontrada = pessoaService.acharOuFalhar(id);
-		return Response.ok(pessoaEncontrada).build();
+		try {
+			Pessoa pessoaEncontrada = pessoaService.acharOuFalhar(id);
+			return Response.ok(pessoaEncontrada).build();
+		} catch (PessoaNaoEncontradaException e) {
+			return Response.status(Status.NOT_FOUND).build();
+		}
+		
 	}
 	
 	@POST
