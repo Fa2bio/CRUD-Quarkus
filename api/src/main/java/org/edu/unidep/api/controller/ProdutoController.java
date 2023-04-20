@@ -1,4 +1,4 @@
-package org.edu.unidep.api;
+package org.edu.unidep.api.controller;
 
 import java.util.List;
 
@@ -40,7 +40,7 @@ public class ProdutoController {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response buscarPessoa(@PathParam("id") Long id) {		
+	public Response buscarProduto(@PathParam("id") Long id) {		
 		try {
 			Produto produtoEncontrado = produtoService.acharOuFalhar(id);
 			return Response.ok(produtoEncontrado).build();

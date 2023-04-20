@@ -1,4 +1,4 @@
-package org.edu.unidep.api;
+package org.edu.unidep.api.controller;
 
 import java.util.List;
 
@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.edu.unidep.api.model.input.PessoaInput;
 import org.edu.unidep.domain.exception.PessoaNaoEncontradaException;
 import org.edu.unidep.domain.model.Pessoa;
 import org.edu.unidep.domain.repository.PessoaRepository;
@@ -53,6 +54,15 @@ public class PessoaController {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response salvar(@RequestBody Pessoa pessoa) {
+		pessoaService.registrar(pessoa);
+		return Response.status(Status.CREATED).build();
+	}
+	
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/viacep")
+	public Response salvarPessoaViaCep(@RequestBody PessoaInput pessoaInput) {
+		Pessoa pessoa = pessoaService.enderecoViaCep(pessoaInput);
 		pessoaService.registrar(pessoa);
 		return Response.status(Status.CREATED).build();
 	}
