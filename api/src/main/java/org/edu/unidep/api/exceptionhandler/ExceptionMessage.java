@@ -4,18 +4,18 @@ import java.time.LocalDateTime;
 
 public class ExceptionMessage {
 
-	private LocalDateTime timestamp;
+	private LocalDateTime timeStamp;
 	
 	private String type;
 	
 	private String userMessage;
 
-	public LocalDateTime getTimestamp() {
-		return timestamp;
+	public LocalDateTime getTimeStamp() {
+		return timeStamp;
 	}
 
-	public void setTimestamp(LocalDateTime timestamp) {
-		this.timestamp = timestamp;
+	public void setTimeStamp(LocalDateTime timeStamp) {
+		this.timeStamp = timeStamp;
 	}
 
 	public String getType() {

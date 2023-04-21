@@ -18,21 +18,20 @@ public class ApiExceptionHandler implements ExceptionMapper<Exception>{
 	@Override
 	public Response toResponse(Exception exception) {
 		if(exception instanceof EntidadeNaoEncontradaException) {
-			ExceptionMessage e = createExceptionMessage(exception, exception.getMessage());
 			return Response.status(Status.NOT_FOUND)
-					.entity(e).build();
+					.entity(createExceptionMessage(exception, exception.getMessage()))
+					.build();
 		}
-		return Response
-				.status(Status.NOT_FOUND)
+		return Response.status(Status.INTERNAL_SERVER_ERROR)
 				.entity(createExceptionMessage(exception, defaultMessage))
 				.build();
 	}
 	
 	private ExceptionMessage createExceptionMessage(Exception exception, String message) {
 		ExceptionMessage e = new ExceptionMessage();
-		e.setTimestamp(LocalDateTime.now());
+		e.setTimeStamp(LocalDateTime.now());
 		e.setType(exception.getClass().getSimpleName());
-		e.setUserMessage(message);		
+		e.setUserMessage(message);
 		return e;
 	}
 

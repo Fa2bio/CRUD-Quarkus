@@ -48,37 +48,31 @@ public class ProdutoController {
 	@Path("vendasUnidadeDeMedida/{id}")
 	public Response listarVendasPorUnidadeMedida(@PathParam("id") Long id) {
 		
-		Produto produtoEncontrado;
-		
-		produtoEncontrado = produtoService.acharOuFalhar(id);
+		Produto produtoEncontrado = produtoService.acharOuFalhar(id);
 		String resultado = produtoRepository.buscarVendasPorUnidadeDeMedida(
 				produtoEncontrado.getDescricao(), produtoEncontrado.getUnidadeMedida());
 		return Response.ok(resultado).build();
+
 	}
 	
 	@GET
 	@Path("vendasEmReais/{id}")
 	public Response listarVendasEmReais(@PathParam("id") Long id) {
 		
-		Produto produtoEncontrado;
-		
-		produtoEncontrado = produtoService.acharOuFalhar(id);
+		Produto produtoEncontrado = produtoService.acharOuFalhar(id);
 		String resultado = produtoRepository.buscarVendasPorReais(
 				produtoEncontrado.getDescricao());
-		return Response.ok(resultado).build();
+		return Response.ok(resultado).build();	
 	}
 	
 	@GET
 	@Path("totalEmEstoque/{id}")
 	public Response listarEmEstoque(@PathParam("id") Long id) {
 		
-		Produto produtoEncontrado;
-		
-		produtoEncontrado = produtoService.acharOuFalhar(id);
+		Produto produtoEncontrado = produtoService.acharOuFalhar(id);
 		String resultado = produtoRepository.buscarTotalEmEstoque(
 				produtoEncontrado.getDescricao());
-		return Response.ok(resultado).build();
-
+		return Response.ok(resultado).build();	
 	}
 	
 	@POST
