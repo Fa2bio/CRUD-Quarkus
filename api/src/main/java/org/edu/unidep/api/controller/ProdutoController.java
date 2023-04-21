@@ -15,7 +15,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
-import org.edu.unidep.domain.exception.ProdutoNaoEncontradoException;
 import org.edu.unidep.domain.model.Produto;
 import org.edu.unidep.domain.repository.ProdutoRepository;
 import org.edu.unidep.domain.service.ProdutoService;
@@ -41,55 +40,45 @@ public class ProdutoController {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response buscarProduto(@PathParam("id") Long id) {		
-		try {
-			Produto produtoEncontrado = produtoService.acharOuFalhar(id);
-			return Response.ok(produtoEncontrado).build();
-		} catch (ProdutoNaoEncontradoException e) {
-			return Response.status(Status.NOT_FOUND).build();
-		}
-		
+		Produto produtoEncontrado = produtoService.acharOuFalhar(id);
+		return Response.ok(produtoEncontrado).build();		
 	}
 	
 	@GET
 	@Path("vendasUnidadeDeMedida/{id}")
 	public Response listarVendasPorUnidadeMedida(@PathParam("id") Long id) {
+		
 		Produto produtoEncontrado;
-		try {
-			produtoEncontrado = produtoService.acharOuFalhar(id);
-			String resultado = produtoRepository.buscarVendasPorUnidadeDeMedida(
-					produtoEncontrado.getDescricao(), produtoEncontrado.getUnidadeMedida());
-			return Response.ok(resultado).build();
-		} catch (ProdutoNaoEncontradoException e) {
-			return Response.status(Status.NOT_FOUND).build();
-		}
+		
+		produtoEncontrado = produtoService.acharOuFalhar(id);
+		String resultado = produtoRepository.buscarVendasPorUnidadeDeMedida(
+				produtoEncontrado.getDescricao(), produtoEncontrado.getUnidadeMedida());
+		return Response.ok(resultado).build();
 	}
 	
 	@GET
 	@Path("vendasEmReais/{id}")
 	public Response listarVendasEmReais(@PathParam("id") Long id) {
+		
 		Produto produtoEncontrado;
-		try {
-			produtoEncontrado = produtoService.acharOuFalhar(id);
-			String resultado = produtoRepository.buscarVendasPorReais(
-					produtoEncontrado.getDescricao());
-			return Response.ok(resultado).build();
-		} catch (ProdutoNaoEncontradoException e) {
-			return Response.status(Status.NOT_FOUND).build();
-		}
+		
+		produtoEncontrado = produtoService.acharOuFalhar(id);
+		String resultado = produtoRepository.buscarVendasPorReais(
+				produtoEncontrado.getDescricao());
+		return Response.ok(resultado).build();
 	}
 	
 	@GET
 	@Path("totalEmEstoque/{id}")
 	public Response listarEmEstoque(@PathParam("id") Long id) {
+		
 		Produto produtoEncontrado;
-		try {
-			produtoEncontrado = produtoService.acharOuFalhar(id);
-			String resultado = produtoRepository.buscarTotalEmEstoque(
-					produtoEncontrado.getDescricao());
-			return Response.ok(resultado).build();
-		} catch (ProdutoNaoEncontradoException e) {
-			return Response.status(Status.NOT_FOUND).build();
-		}
+		
+		produtoEncontrado = produtoService.acharOuFalhar(id);
+		String resultado = produtoRepository.buscarTotalEmEstoque(
+				produtoEncontrado.getDescricao());
+		return Response.ok(resultado).build();
+
 	}
 	
 	@POST
