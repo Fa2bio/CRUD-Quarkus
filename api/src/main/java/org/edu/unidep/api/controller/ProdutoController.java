@@ -1,5 +1,6 @@
 package org.edu.unidep.api.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -15,6 +16,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.edu.unidep.api.assembler.ProdutoInputDisassembler;
+import org.edu.unidep.api.assembler.ProdutoOutputAssembler;
+import org.edu.unidep.api.model.input.ProdutoInput;
+import org.edu.unidep.api.model.output.ProdutoEmReaisModel;
+import org.edu.unidep.api.model.output.ProdutoEstoqueModel;
+import org.edu.unidep.api.model.output.ProdutoModel;
+import org.edu.unidep.api.model.output.ProdutoUnidadeDeMedidaModel;
 import org.edu.unidep.domain.model.Produto;
 import org.edu.unidep.domain.repository.ProdutoRepository;
 import org.edu.unidep.domain.service.ProdutoService;
@@ -28,56 +36,80 @@ public class ProdutoController {
 	@Inject 
 	private ProdutoService produtoService;
 	
+	@Inject
+	private ProdutoInputDisassembler produtoInputDisassembler;
+	
+	@Inject
+	private ProdutoOutputAssembler produtoOutputAssembler;
+	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response listarProdutos() {
+	public List<ProdutoModel> listarProdutos() {
 		List<Produto> todasProdutos = produtoRepository.listarProdutos();
-		if(todasProdutos.isEmpty()) return Response.noContent().build();
-		return Response.ok(todasProdutos).build();
+		List<ProdutoModel> todasProdutosModel = produtoOutputAssembler.toCollectionModel(todasProdutos);
+		return todasProdutosModel;
 	}
 	
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response buscarProduto(@PathParam("id") Long id) {		
+	public ProdutoModel buscarProduto(@PathParam("id") Long id) {		
 		Produto produtoEncontrado = produtoService.acharOuFalhar(id);
-		return Response.ok(produtoEncontrado).build();		
+		ProdutoModel produtoModel = produtoOutputAssembler.toModel(produtoEncontrado);
+		return produtoModel;		
 	}
 	
 	@GET
 	@Path("vendasUnidadeDeMedida/{id}")
-	public Response listarVendasPorUnidadeMedida(@PathParam("id") Long id) {
+	public ProdutoUnidadeDeMedidaModel listarVendasPorUnidadeMedida(@PathParam("id") Long id) {
 		
 		Produto produtoEncontrado = produtoService.acharOuFalhar(id);
 		String resultado = produtoRepository.buscarVendasPorUnidadeDeMedida(
 				produtoEncontrado.getDescricao(), produtoEncontrado.getUnidadeMedida());
-		return Response.ok(resultado).build();
+		
+		Integer valor = Integer.valueOf(resultado);
+		ProdutoUnidadeDeMedidaModel produtoModel = produtoOutputAssembler.toUnidadeDeMedidaModel(produtoEncontrado);
+		produtoModel.setVendasPorUnidadeMedida(valor);
+		
+		return produtoModel;
 
 	}
 	
 	@GET
 	@Path("vendasEmReais/{id}")
-	public Response listarVendasEmReais(@PathParam("id") Long id) {
+	public ProdutoEmReaisModel listarVendasEmReais(@PathParam("id") Long id) {
 		
 		Produto produtoEncontrado = produtoService.acharOuFalhar(id);
 		String resultado = produtoRepository.buscarVendasPorReais(
 				produtoEncontrado.getDescricao());
-		return Response.ok(resultado).build();	
+
+		Double d = Double.valueOf(resultado);
+		BigDecimal valor = BigDecimal.valueOf(d).setScale(2);		
+		
+		ProdutoEmReaisModel produtoModel = produtoOutputAssembler.toReaisModel(produtoEncontrado);
+		produtoModel.setVendasEmReais(valor);
+		return produtoModel;	
 	}
 	
 	@GET
 	@Path("totalEmEstoque/{id}")
-	public Response listarEmEstoque(@PathParam("id") Long id) {
+	public ProdutoEstoqueModel listarEmEstoque(@PathParam("id") Long id) {
 		
 		Produto produtoEncontrado = produtoService.acharOuFalhar(id);
 		String resultado = produtoRepository.buscarTotalEmEstoque(
 				produtoEncontrado.getDescricao());
-		return Response.ok(resultado).build();	
+		
+		Integer valor = Integer.valueOf(resultado);
+		ProdutoEstoqueModel produtoModel = produtoOutputAssembler.toEstoqueModel(produtoEncontrado);
+		produtoModel.setTotalEmEstoque(valor);
+		
+		return produtoModel;	
 	}
 	
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response salvar(@RequestBody Produto produto) {
+	public Response salvar(@RequestBody ProdutoInput produtoInput) {
+		Produto produto = produtoInputDisassembler.toDomainObject(produtoInput);
 		produtoService.registrar(produto);
 		return Response.status(Status.CREATED).build();
 	}
@@ -85,9 +117,9 @@ public class ProdutoController {
 	@PUT
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response atualizar(@PathParam("id") Long id, @RequestBody Produto produto) {
-		Produto produtoAtualizado = produtoService.atualizar(id, produto);
-		return Response.ok(produtoAtualizado).build();
+	public Produto atualizar(@PathParam("id") Long id, @RequestBody ProdutoInput produtoInput) {
+		Produto produto = produtoService.atualizar(id, produtoInput);
+		return produto;
 	}
 	
 	@DELETE

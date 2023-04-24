@@ -4,6 +4,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.edu.unidep.api.assembler.ProdutoInputDisassembler;
+import org.edu.unidep.api.model.input.ProdutoInput;
 import org.edu.unidep.domain.exception.ProdutoNaoEncontradoException;
 import org.edu.unidep.domain.model.Produto;
 import org.edu.unidep.domain.repository.ProdutoRepository;
@@ -14,17 +16,21 @@ public class ProdutoService {
 	@Inject
 	private ProdutoRepository produtoRepository;
 
+	@Inject
+	private ProdutoInputDisassembler produtoInputDisassembler;
+	
 	@Transactional
 	public void registrar(Produto produto) {
 		produtoRepository.salvar(produto);
 	}
 	
 	@Transactional
-	public Produto atualizar(Long id, Produto produtoAtualizado) {
+	public Produto atualizar(Long id, ProdutoInput produtoInput) {
 		Produto produtoEncontrado = acharOuFalhar(id);
-		produtoEncontrado.setDescricao(produtoAtualizado.getDescricao());
-		produtoEncontrado.setDataVencimento(produtoAtualizado.getDataVencimento());;
-		produtoEncontrado.setUnidadeMedida(produtoAtualizado.getUnidadeMedida());;
+		produtoInputDisassembler.copyToDomainObject(produtoInput, produtoEncontrado);
+//		produtoEncontrado.setDescricao(produtoAtualizado.getDescricao());
+//		produtoEncontrado.setDataVencimento(produtoAtualizado.getDataVencimento());;
+//		produtoEncontrado.setUnidadeMedida(produtoAtualizado.getUnidadeMedida());;
 		
 		return produtoEncontrado;
 	}
