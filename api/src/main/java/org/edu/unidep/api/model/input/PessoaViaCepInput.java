@@ -1,11 +1,12 @@
 package org.edu.unidep.api.model.input;
 
-public class PessoaInput {
+public class PessoaViaCepInput {
 
 	private String nome;
 	private String dataAniversario;
 	private String sangue;
 	private String cpf;
+	private String cep;
 	
 	public String getNome() {
 		return nome;
@@ -31,5 +32,12 @@ public class PessoaInput {
 	public void setCpf(String cpf) {
 		this.cpf = cpf;
 	}
-
+	public String getCep() {
+		return cep;
+	}
+	public void setCep(String cep) {
+		this.cep = cep;
+	}
+	
+	
 }

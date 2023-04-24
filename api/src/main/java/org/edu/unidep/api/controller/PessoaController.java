@@ -15,7 +15,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.edu.unidep.api.assembler.PessoaInputDisassembler;
+import org.edu.unidep.api.assembler.PessoaOutputAssembler;
 import org.edu.unidep.api.model.input.PessoaInput;
+import org.edu.unidep.api.model.input.PessoaViaCepInput;
+import org.edu.unidep.api.model.output.PessoaModel;
+import org.edu.unidep.domain.model.Endereco;
 import org.edu.unidep.domain.model.Pessoa;
 import org.edu.unidep.domain.repository.PessoaRepository;
 import org.edu.unidep.domain.service.PessoaService;
@@ -29,25 +34,33 @@ public class PessoaController {
 	@Inject 
 	private PessoaService pessoaService;
 	
+	@Inject
+	private PessoaOutputAssembler pessoaOutputAssembler;
+	
+	@Inject
+	private PessoaInputDisassembler pessoaInputDisassembler;
+	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response listarPessoa() {
-		List<Pessoa> todasPessoas = pessoaRepository.listarPessoas();
-		if(todasPessoas.isEmpty()) return Response.status(Status.NO_CONTENT).build();
-		return Response.ok(todasPessoas).build();
+	public List<PessoaModel> listarPessoa() {
+		List<Pessoa> todasPessoas = pessoaRepository.listarPessoas();		
+		List<PessoaModel> todasPessoasModel = pessoaOutputAssembler.toCollectionModel(todasPessoas);
+		return todasPessoasModel;
 	}
 	
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response buscarPessoa(@PathParam("id") Long id) {
+	public PessoaModel buscarPessoa(@PathParam("id") Long id) {
 		Pessoa pessoaEncontrada = pessoaService.acharOuFalhar(id);
-		return Response.ok(pessoaEncontrada).build();
+		PessoaModel pessoaModel = pessoaOutputAssembler.toModel(pessoaEncontrada);
+		return pessoaModel;
 	}
 	
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response salvar(@RequestBody Pessoa pessoa) {
+	public Response salvar(@RequestBody PessoaInput pessoaInput) {
+		Pessoa pessoa = pessoaInputDisassembler.toDomainObject(pessoaInput);
 		pessoaService.registrar(pessoa);
 		return Response.status(Status.CREATED).build();
 	}
@@ -55,8 +68,10 @@ public class PessoaController {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/viacep")
-	public Response salvarPessoaViaCep(@RequestBody PessoaInput pessoaInput) {
-		Pessoa pessoa = pessoaService.enderecoViaCep(pessoaInput);
+	public Response salvarPessoaViaCep(@RequestBody PessoaViaCepInput pessoaViaCepInput) {
+		Endereco endereco = pessoaService.enderecoViaCep(pessoaViaCepInput.getCep());
+		Pessoa pessoa = pessoaInputDisassembler.toDomainObjectViaCep(pessoaViaCepInput);
+		pessoa.setEndereco(endereco);
 		pessoaService.registrar(pessoa);
 		return Response.status(Status.CREATED).build();
 	}
@@ -64,8 +79,8 @@ public class PessoaController {
 	@PUT
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response atualizar(@PathParam("id") Long id, @RequestBody Pessoa pessoa) {
-		Pessoa pessoaAtualizada = pessoaService.atualizar(id, pessoa);
+	public Response atualizar(@PathParam("id") Long id, @RequestBody PessoaInput pessoaInput) {
+		Pessoa pessoaAtualizada = pessoaService.atualizar(id, pessoaInput);
 		return Response.ok(pessoaAtualizada).build();
 	}
 	

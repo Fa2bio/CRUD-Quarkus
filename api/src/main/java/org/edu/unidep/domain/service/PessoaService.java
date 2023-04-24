@@ -12,6 +12,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.edu.unidep.api.assembler.PessoaInputDisassembler;
 import org.edu.unidep.api.model.input.PessoaInput;
 import org.edu.unidep.domain.exception.EnderecoNaoEncontradoException;
 import org.edu.unidep.domain.exception.PessoaNaoEncontradaException;
@@ -27,18 +28,18 @@ public class PessoaService {
 	@Inject
 	private PessoaRepository pessoaRepository;
 	
+	@Inject
+	private PessoaInputDisassembler pessoaInputDisassembler;
+	
 	@Transactional
 	public void registrar(Pessoa pessoa) {
 		pessoaRepository.salvar(pessoa);
 	}
 	
 	@Transactional
-	public Pessoa atualizar(Long id, Pessoa pessoaAtualizada) {
+	public Pessoa atualizar(Long id, PessoaInput pessoaInput) {
 		Pessoa pessoaEncontrada = acharOuFalhar(id);
-		pessoaEncontrada.setNome(pessoaAtualizada.getNome());
-		pessoaEncontrada.setSangue(pessoaAtualizada.getSangue());
-		pessoaEncontrada.setDataAniversario(pessoaAtualizada.getDataAniversario());
-		pessoaEncontrada.setEndereco(pessoaAtualizada.getEndereco());
+		pessoaInputDisassembler.copyToDomainObject(pessoaInput, pessoaEncontrada);
 		
 		return pessoaEncontrada;
 	}
@@ -54,9 +55,9 @@ public class PessoaService {
 				.orElseThrow(()-> new PessoaNaoEncontradaException(id));
 	}
 	
-	public Pessoa enderecoViaCep(PessoaInput pessoaInput) {
+	public Endereco enderecoViaCep(String cep) {
 		try {
-			URL url = new URL(String.format("https://viacep.com.br/ws/%s/json/", pessoaInput.getCep()));
+			URL url = new URL(String.format("https://viacep.com.br/ws/%s/json/", cep));
 			URLConnection connection = url.openConnection( );
 			InputStream input = connection.getInputStream();
 			BufferedReader buffer = new BufferedReader(new InputStreamReader(input, "UTF-8"));
@@ -71,22 +72,15 @@ public class PessoaService {
 			Gson gson = new Gson();
 			Endereco endereco = gson.fromJson(jsonCep.toString(), Endereco.class);
 			if(endereco.getCep() == null) {
-				throw new EnderecoNaoEncontradoException(pessoaInput.getCep());
+				throw new EnderecoNaoEncontradoException(cep);
 			}
 			
-			Pessoa pessoa = new Pessoa();
-			pessoa.setNome(pessoaInput.getNome());
-			pessoa.setSangue(pessoaInput.getSangue());
-			pessoa.setCpf(pessoaInput.getCpf());
-			pessoa.setDataAniversario(pessoaInput.getDataAniversario());
-			pessoa.setEndereco(endereco);
-			
-			return pessoa;
+			return endereco;
 			
 		} catch (MalformedURLException e) {
-			throw new EnderecoNaoEncontradoException(pessoaInput.getCep());
+			throw new EnderecoNaoEncontradoException(cep);
 		} catch (IOException e) {
-			throw new EnderecoNaoEncontradoException(pessoaInput.getCep());
+			throw new EnderecoNaoEncontradoException(cep);
 		}
 	}
 
