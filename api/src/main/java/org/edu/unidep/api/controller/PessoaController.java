@@ -71,6 +71,7 @@ public class PessoaController {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/viacep")
 	public Response salvarPessoaViaCep(@RequestBody PessoaViaCepInput pessoaViaCepInput) {
+		pessoaService.validarPessoaInput(pessoaViaCepInput);
 		Endereco endereco = pessoaService.enderecoViaCep(pessoaViaCepInput.getCep());
 		Pessoa pessoa = pessoaInputDisassembler.toDomainObjectViaCep(pessoaViaCepInput);
 		pessoa.setEndereco(endereco);
@@ -82,6 +83,7 @@ public class PessoaController {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response atualizar(@PathParam("id") Long id, @RequestBody PessoaInput pessoaInput) {
+		pessoaService.validarPessoaInput(pessoaInput);
 		Pessoa pessoaAtualizada = pessoaService.atualizar(id, pessoaInput);
 		return Response.ok(pessoaAtualizada).build();
 	}

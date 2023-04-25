@@ -1,11 +1,31 @@
 package org.edu.unidep.api.model.input;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.br.CPF;
+
 public class PessoaViaCepInput {
 
+	@NotNull(message = "Nome da pessoa não pode ser nulo.")
+	@NotBlank(message = "Nome da pessoa não pode estar em braco ou com apenas espaços.")
 	private String nome;
+	
+	@NotNull(message = "Nome da pessoa não pode ser nulo.")
+	@NotBlank(message = "Nome da pessoa não pode estar em braco ou com apenas espaços.")
 	private String dataAniversario;
+	
+	@NotNull(message = "Nome da pessoa não pode ser nulo.")
+	@NotBlank(message = "Nome da pessoa não pode estar em braco ou com apenas espaços.")
 	private String sangue;
+	
+	@NotNull(message = "Nome da pessoa não pode ser nulo.")
+	@NotBlank(message = "Nome da pessoa não pode estar em braco ou com apenas espaços.")
+	@CPF(message = "O CPF informado deve ser válido de acordo com as normas da Receita Federal Brasileira.")
 	private String cpf;
+	
+	@NotNull(message = "Nome da pessoa não pode ser nulo.")
+	@NotBlank(message = "Nome da pessoa não pode estar em braco ou com apenas espaços.")
 	private String cep;
 	
 	public String getNome() {

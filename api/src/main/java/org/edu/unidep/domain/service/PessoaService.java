@@ -18,6 +18,7 @@ import javax.validation.Validator;
 
 import org.edu.unidep.api.assembler.PessoaInputDisassembler;
 import org.edu.unidep.api.model.input.PessoaInput;
+import org.edu.unidep.api.model.input.PessoaViaCepInput;
 import org.edu.unidep.domain.exception.EnderecoNaoEncontradoException;
 import org.edu.unidep.domain.exception.PessoaNaoEncontradaException;
 import org.edu.unidep.domain.model.Endereco;
@@ -57,10 +58,18 @@ public class PessoaService {
 		pessoaRepository.deletar(pessoaEncontrada);
 	}
 	
-	public void validarPessoaInput(PessoaInput pessoaInput) {
-		Set<ConstraintViolation<PessoaInput>> constraintViolations = validator.validate(pessoaInput);
-		if(constraintViolations.isEmpty()) return;
-		else throw new ConstraintViolationException(constraintViolations);
+	public <T> void validarPessoaInput(T pessoaInput) {
+		
+		if(pessoaInput instanceof PessoaInput) {
+			Set<ConstraintViolation<PessoaInput>> constraintViolations = validator.validate((PessoaInput)pessoaInput);
+			if(constraintViolations.isEmpty()) return;
+			else throw new ConstraintViolationException(constraintViolations);
+		}if(pessoaInput instanceof PessoaViaCepInput) {
+			Set<ConstraintViolation<PessoaViaCepInput>> constraintViolations = validator.validate((PessoaViaCepInput)pessoaInput);
+			if(constraintViolations.isEmpty()) return;
+			else throw new ConstraintViolationException(constraintViolations);
+		}
+
 	}
 	
 	public Pessoa acharOuFalhar(Long id) {
