@@ -60,7 +60,9 @@ public class PessoaController {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response salvar(@RequestBody PessoaInput pessoaInput) {
+		pessoaService.validarPessoaInput(pessoaInput);
 		Pessoa pessoa = pessoaInputDisassembler.toDomainObject(pessoaInput);
+		System.out.println(pessoa.getEndereco().getComplemento());
 		pessoaService.registrar(pessoa);
 		return Response.status(Status.CREATED).build();
 	}

@@ -7,10 +7,14 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
 
 import org.edu.unidep.api.assembler.PessoaInputDisassembler;
 import org.edu.unidep.api.model.input.PessoaInput;
@@ -44,10 +48,19 @@ public class PessoaService {
 		return pessoaEncontrada;
 	}
 	
+	@Inject
+	private Validator validator;
+	
 	@Transactional
 	public void deletarPessoa(Long id) {
 		Pessoa pessoaEncontrada = acharOuFalhar(id);
 		pessoaRepository.deletar(pessoaEncontrada);
+	}
+	
+	public void validarPessoaInput(PessoaInput pessoaInput) {
+		Set<ConstraintViolation<PessoaInput>> constraintViolations = validator.validate(pessoaInput);
+		if(constraintViolations.isEmpty()) return;
+		else throw new ConstraintViolationException(constraintViolations);
 	}
 	
 	public Pessoa acharOuFalhar(Long id) {

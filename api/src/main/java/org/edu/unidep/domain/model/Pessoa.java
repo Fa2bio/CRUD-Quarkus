@@ -8,9 +8,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.hibernate.validator.constraints.br.CPF;
-import org.wildfly.common.annotation.NotNull;
-
 @Entity
 @Table(name = "pessoa")
 public class Pessoa {
@@ -20,21 +17,16 @@ public class Pessoa {
 	@Column(name = "codigo_pessoa")
 	private Long id;
 	
-	@NotNull
-	@Column(name = "nome", length = 100)
+	@Column(name = "nome", length = 100, nullable = false)
 	private String nome;
 	
-	@NotNull
-	@Column(name = "data_de_aniversario", length = 10)
+	@Column(name = "data_de_aniversario", length = 10, nullable = false)
 	private String dataAniversario;
 	
-	@NotNull
-	@Column(name = "tipo_sanguineo", length = 3)
+	@Column(name = "tipo_sanguineo", length = 3, nullable = false)
 	private String sangue;
 	
-	@NotNull
-	@Column(name = "cpf", length = 14)
-	@CPF
+	@Column(name = "cpf", length = 14, nullable = false)
 	private String cpf;
 	
 	@Embedded

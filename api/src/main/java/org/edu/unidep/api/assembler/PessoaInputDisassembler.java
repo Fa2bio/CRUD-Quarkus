@@ -14,7 +14,7 @@ public class PessoaInputDisassembler {
 	@Inject
 	private ModelMapper modelMapper;
 	
-	public Pessoa toDomainObject(PessoaInput pessoaInput ) {
+	public Pessoa toDomainObject(PessoaInput pessoaInput) {
 		return modelMapper.map(pessoaInput, Pessoa.class);
 	}
 	
