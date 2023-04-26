@@ -1,8 +1,13 @@
 package org.edu.unidep.domain.service;
 
+import java.util.Set;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
 
 import org.edu.unidep.api.assembler.ProdutoInputDisassembler;
 import org.edu.unidep.api.model.input.ProdutoInput;
@@ -19,6 +24,9 @@ public class ProdutoService {
 	@Inject
 	private ProdutoInputDisassembler produtoInputDisassembler;
 	
+	@Inject
+	private Validator validator;
+	
 	@Transactional
 	public void registrar(Produto produto) {
 		produtoRepository.salvar(produto);
@@ -28,10 +36,6 @@ public class ProdutoService {
 	public Produto atualizar(Long id, ProdutoInput produtoInput) {
 		Produto produtoEncontrado = acharOuFalhar(id);
 		produtoInputDisassembler.copyToDomainObject(produtoInput, produtoEncontrado);
-//		produtoEncontrado.setDescricao(produtoAtualizado.getDescricao());
-//		produtoEncontrado.setDataVencimento(produtoAtualizado.getDataVencimento());;
-//		produtoEncontrado.setUnidadeMedida(produtoAtualizado.getUnidadeMedida());;
-		
 		return produtoEncontrado;
 	}
 	
@@ -39,6 +43,14 @@ public class ProdutoService {
 	public void deletarProduto(Long id) {
 		Produto produtoEncontrado = acharOuFalhar(id);
 		produtoRepository.deletar(produtoEncontrado);
+	}
+	
+	public void validarProdutoInput(ProdutoInput produtoInput) {	
+	
+		Set<ConstraintViolation<ProdutoInput>> constraintViolations = validator.validate(produtoInput);
+		if(constraintViolations.isEmpty()) return;
+		else throw new ConstraintViolationException(constraintViolations);
+		
 	}
 	
 	public Produto acharOuFalhar(Long id) {

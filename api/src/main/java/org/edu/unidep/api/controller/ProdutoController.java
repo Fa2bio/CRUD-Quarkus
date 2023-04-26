@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.edu.unidep.api.assembler.ProdutoInputDisassembler;
 import org.edu.unidep.api.assembler.ProdutoOutputAssembler;
 import org.edu.unidep.api.model.input.ProdutoInput;
@@ -23,12 +24,14 @@ import org.edu.unidep.api.model.output.ProdutoEmReaisModel;
 import org.edu.unidep.api.model.output.ProdutoEstoqueModel;
 import org.edu.unidep.api.model.output.ProdutoModel;
 import org.edu.unidep.api.model.output.ProdutoUnidadeDeMedidaModel;
+import org.edu.unidep.api.swaggeropenapi.ProdutoSwagger;
 import org.edu.unidep.domain.model.Produto;
 import org.edu.unidep.domain.repository.ProdutoRepository;
 import org.edu.unidep.domain.service.ProdutoService;
 
 @Path("/produtos")
-public class ProdutoController {
+@Tag(name = "Produto")
+public class ProdutoController implements ProdutoSwagger{
 
 	@Inject
 	private ProdutoRepository produtoRepository;
@@ -109,6 +112,7 @@ public class ProdutoController {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response salvar(@RequestBody ProdutoInput produtoInput) {
+		produtoService.validarProdutoInput(produtoInput);
 		Produto produto = produtoInputDisassembler.toDomainObject(produtoInput);
 		produtoService.registrar(produto);
 		return Response.status(Status.CREATED).build();
@@ -118,6 +122,7 @@ public class ProdutoController {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Produto atualizar(@PathParam("id") Long id, @RequestBody ProdutoInput produtoInput) {
+		produtoService.validarProdutoInput(produtoInput);
 		Produto produto = produtoService.atualizar(id, produtoInput);
 		return produto;
 	}
