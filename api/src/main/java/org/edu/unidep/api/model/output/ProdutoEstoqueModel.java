@@ -1,9 +1,16 @@
 package org.edu.unidep.api.model.output;
 
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
 public class ProdutoEstoqueModel {
 
+	@Schema(example = "PICANHA", required = true)
 	private String descricao;
+	
+	@Schema(example = "KG", required = true)
 	private String unidadeMedida;
+	
+	@Schema(example = "10", required = true)
 	private Integer totalEmEstoque;	
 
 	public String getDescricao() {

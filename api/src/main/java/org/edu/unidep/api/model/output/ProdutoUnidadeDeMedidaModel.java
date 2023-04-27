@@ -1,10 +1,19 @@
 package org.edu.unidep.api.model.output;
 
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
 public class ProdutoUnidadeDeMedidaModel {
 
+	@Schema(example = "1", required = true)
 	private Long id;
+	
+	@Schema(example = "PICANHA", required = true)
 	private String descricao;
+	
+	@Schema(example = "KG", required = true)
 	private String unidadeMedida;
+	
+	@Schema(example = "20", required = true)
 	private Integer vendasPorUnidadeMedida;
 	
 	public Long getId() {

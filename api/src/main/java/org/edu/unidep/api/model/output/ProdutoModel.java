@@ -2,14 +2,29 @@ package org.edu.unidep.api.model.output;
 
 import java.math.BigDecimal;
 
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
 public class ProdutoModel {
 
+	@Schema(example = "1", required = true)
 	private Long id;
+	
+	@Schema(example = "PICANHA", required = true)
 	private String descricao;
+	
+	@Schema(example = "KG", required = true)
 	private String unidadeMedida;
+	
+	@Schema(example = "10/01/2020", required = true)
 	private String dataVencimento;
+	
+	@Schema(example = "10", required = true)
 	private Integer totalDeVendas;
+	
+	@Schema(example = "29.90", required = true)
 	private BigDecimal preco;
+	
+	@Schema(example = "5", required = true)
 	private Integer estoque;
 	
 	public Long getId() {

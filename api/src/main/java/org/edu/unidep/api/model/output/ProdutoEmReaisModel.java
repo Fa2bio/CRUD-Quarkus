@@ -2,9 +2,14 @@ package org.edu.unidep.api.model.output;
 
 import java.math.BigDecimal;
 
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
 public class ProdutoEmReaisModel {
 
+	@Schema(example = "PICANHA", required = true)
 	private String descricao;
+	
+	@Schema(example = "687.90", required = true)
 	private BigDecimal vendasEmReais;
 	
 	public String getDescricao() {
