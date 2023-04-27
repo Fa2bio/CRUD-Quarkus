@@ -10,10 +10,10 @@ public class ExceptionMessage {
 	@Schema(example = "2007-12-03T10:15:30")
 	private LocalDateTime timeStamp;
 	
-	@Schema(example = "EntidadeNaoEncontradaException")
+	@Schema(example = "ConstraintViolationException")
 	private String type;
 	
-	@Schema(example = "Não existe cadastro de pessoa com o id: 10")
+	@Schema(example = "As seguintes propriedades possuem valores inválidos")
 	private String userMessage;
 	
 	private Set<FieldError> fieldErrors;
