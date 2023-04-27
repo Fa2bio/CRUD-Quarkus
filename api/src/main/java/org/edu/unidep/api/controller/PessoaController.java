@@ -14,9 +14,17 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.edu.unidep.api.assembler.PessoaInputDisassembler;
 import org.edu.unidep.api.assembler.PessoaOutputAssembler;
+import org.edu.unidep.api.exceptionhandler.ExceptionMessage;
 import org.edu.unidep.api.model.input.PessoaInput;
 import org.edu.unidep.api.model.input.PessoaViaCepInput;
 import org.edu.unidep.api.model.output.PessoaModel;
@@ -26,6 +34,7 @@ import org.edu.unidep.domain.repository.PessoaRepository;
 import org.edu.unidep.domain.service.PessoaService;
 
 @Path("/pessoas")
+@Tag(name = "Pessoa")
 public class PessoaController {
 
 	@Inject
@@ -42,6 +51,7 @@ public class PessoaController {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
+	@Operation(description = "Lista Todas As Pessoas")
 	public List<PessoaModel> listarPessoa() {
 		List<Pessoa> todasPessoas = pessoaRepository.listarPessoas();		
 		List<PessoaModel> todasPessoasModel = pessoaOutputAssembler.toCollectionModel(todasPessoas);
@@ -51,7 +61,14 @@ public class PessoaController {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public PessoaModel buscarPessoa(@PathParam("id") Long id) {
+	@Operation(description = "Busca Pessoa Por Id")
+	@APIResponses({
+		@APIResponse(responseCode = "404", description = "Pessoa Não Encontrada", content = 
+			@Content(schema = @Schema(implementation = ExceptionMessage.class)))
+	})
+	public PessoaModel buscarPessoa(
+			@Parameter(description = "Id da Pessoa", example = "1", required = true)
+			@PathParam("id") Long id) {
 		Pessoa pessoaEncontrada = pessoaService.acharOuFalhar(id);
 		PessoaModel pessoaModel = pessoaOutputAssembler.toModel(pessoaEncontrada);
 		return pessoaModel;
@@ -59,7 +76,16 @@ public class PessoaController {
 	
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response salvar(@RequestBody PessoaInput pessoaInput) {
+	@Operation(description = "Registra Uma Pessoa Com Endereço Completo")
+	@APIResponses({
+		@APIResponse(responseCode = "201", description = "Pessoa Registrada"),
+		@APIResponse(responseCode = "400", description = "Requisição Não Atendida", content = 
+			@Content(schema = @Schema(implementation = ExceptionMessage.class)))
+	})
+	public Response salvar(
+			@RequestBody(description = "Body", required = true)
+			PessoaInput pessoaInput) {
+		
 		pessoaService.validarPessoaInput(pessoaInput);
 		Pessoa pessoa = pessoaInputDisassembler.toDomainObject(pessoaInput);
 		System.out.println(pessoa.getEndereco().getComplemento());
@@ -68,9 +94,18 @@ public class PessoaController {
 	}
 	
 	@POST
-	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/viacep")
-	public Response salvarPessoaViaCep(@RequestBody PessoaViaCepInput pessoaViaCepInput) {
+	@Produces(MediaType.APPLICATION_JSON)
+	@Operation(description = "Registra Uma Pessoa Com Endereço Gerado Pela API ViaCep")
+	@APIResponses({
+		@APIResponse(responseCode = "201", description = "Pessoa Registrada"),
+		@APIResponse(responseCode = "400", description = "Requisição Não Atendida", content = 
+			@Content(schema = @Schema(implementation = ExceptionMessage.class)))
+	})
+	public Response salvarPessoaViaCep(
+			@RequestBody(description = "Body", required = true)
+			PessoaViaCepInput pessoaViaCepInput) {
+		
 		pessoaService.validarPessoaInput(pessoaViaCepInput);
 		Endereco endereco = pessoaService.enderecoViaCep(pessoaViaCepInput.getCep());
 		Pessoa pessoa = pessoaInputDisassembler.toDomainObjectViaCep(pessoaViaCepInput);
@@ -82,7 +117,19 @@ public class PessoaController {
 	@PUT
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response atualizar(@PathParam("id") Long id, @RequestBody PessoaInput pessoaInput) {
+	@Operation(description = "Atualiza Um Registro De Pessoa Por Id")
+	@APIResponses({
+		@APIResponse(responseCode = "200", description = "Pessoa Atualizada"),
+		@APIResponse(responseCode = "400", description = "Requisição Não Atendida", content = 
+			@Content(schema = @Schema(implementation = ExceptionMessage.class))),
+		@APIResponse(responseCode = "404", description = "Pessoa Não Encontrada")
+	})
+	public Response atualizar(
+			@Parameter(description = "Id da Pessoa", example = "1", required = true)
+			@PathParam("id") Long id,
+			
+			@RequestBody(description = "Body", required = true)  PessoaInput pessoaInput) {
+		
 		pessoaService.validarPessoaInput(pessoaInput);
 		Pessoa pessoaAtualizada = pessoaService.atualizar(id, pessoaInput);
 		return Response.ok(pessoaAtualizada).build();
@@ -91,7 +138,14 @@ public class PessoaController {
 	@DELETE
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deletar(@PathParam("id") Long id) {
+	@Operation(description = "Deleta Um Registro De Pessoa Por Id")
+	@APIResponses({
+		@APIResponse(responseCode = "204", description = "Pessoa Excluída"),
+		@APIResponse(responseCode = "404", description = "Pessoa Não Encontrada")
+	})
+	public Response deletar(
+			@Parameter(description = "Id da Pessoa", example = "1", required = true)
+			@PathParam("id") Long id) {
 		pessoaService.deletarPessoa(id);
 		return Response.noContent().build();
 	}
