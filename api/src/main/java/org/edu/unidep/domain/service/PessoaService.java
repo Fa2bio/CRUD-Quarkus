@@ -36,6 +36,9 @@ public class PessoaService {
 	@Inject
 	private PessoaInputDisassembler pessoaInputDisassembler;
 	
+	@Inject
+	private Validator validator;
+	
 	@Transactional
 	public void registrar(Pessoa pessoa) {
 		pessoaRepository.salvar(pessoa);
@@ -48,9 +51,6 @@ public class PessoaService {
 		
 		return pessoaEncontrada;
 	}
-	
-	@Inject
-	private Validator validator;
 	
 	@Transactional
 	public void deletarPessoa(Long id) {
