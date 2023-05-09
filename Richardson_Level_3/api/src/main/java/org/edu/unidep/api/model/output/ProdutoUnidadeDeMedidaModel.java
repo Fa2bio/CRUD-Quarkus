@@ -1,5 +1,10 @@
 package org.edu.unidep.api.model.output;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ws.rs.core.Link;
+
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 public class ProdutoUnidadeDeMedidaModel {
@@ -15,6 +20,12 @@ public class ProdutoUnidadeDeMedidaModel {
 	
 	@Schema(example = "20", required = true)
 	private Integer vendasPorUnidadeMedida;
+	
+	private List<Link> links = new ArrayList<>();
+	
+	public void addLink(Link link) {
+		this.links.add(link);
+	}
 	
 	public Long getId() {
 		return id;
@@ -40,5 +51,12 @@ public class ProdutoUnidadeDeMedidaModel {
 	public void setVendasPorUnidadeMedida(Integer vendasPorUnidadeMedida) {
 		this.vendasPorUnidadeMedida = vendasPorUnidadeMedida;
 	}
-		
+	
+	public List<Link> getLinks() {
+		return links;
+	}
+
+	public void setLinks(List<Link> links) {
+		this.links = links;
+	}
 }

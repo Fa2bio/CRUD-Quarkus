@@ -11,8 +11,10 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -54,14 +56,14 @@ public class ProdutoController{
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(description = "Lista Todos Os Produtos")
-	public List<ProdutoModel> listarProdutos() {
+	public List<ProdutoModel> listarProdutos(@Context UriInfo uriInfo) {
 		List<Produto> todasProdutos = produtoRepository.listarProdutos();
-		List<ProdutoModel> todasProdutosModel = produtoOutputAssembler.toCollectionModel(todasProdutos);
+		List<ProdutoModel> todasProdutosModel = produtoOutputAssembler.toCollectionModel(todasProdutos, uriInfo);
 		return todasProdutosModel;
 	}
 	
 	@GET
-	@Path("/{id}")
+
 	@Produces(MediaType.APPLICATION_JSON)
 	@Operation(description = "Buscar Produto Por Id")
 	@APIResponses({
@@ -69,11 +71,12 @@ public class ProdutoController{
 		@APIResponse(responseCode = "404", description = "Produto Não Encontrado", content =
 				@Content(schema = @Schema(implementation = ExceptionMessage.class)))		
 	})
-	public ProdutoModel buscarProduto(
+	@Path("/{id}")
+	public ProdutoModel buscarProdutoPorId(
 			@Parameter(description = "Id da Produto", example = "1", required = true)
-			@PathParam("id") Long id) {		
+			@PathParam("id") Long id, @Context UriInfo uriInfo) {		
 		Produto produtoEncontrado = produtoService.acharOuFalhar(id);
-		ProdutoModel produtoModel = produtoOutputAssembler.toModel(produtoEncontrado);
+		ProdutoModel produtoModel = produtoOutputAssembler.toModel(produtoEncontrado, uriInfo);
 		return produtoModel;		
 	}
 	
@@ -88,14 +91,14 @@ public class ProdutoController{
 	})
 	public ProdutoUnidadeDeMedidaModel listarVendasPorUnidadeMedida(
 			@Parameter(description = "Id da Produto", example = "1", required = true)
-			@PathParam("id") Long id) {
+			@PathParam("id") Long id, @Context UriInfo uriInfo) {
 		
 		Produto produtoEncontrado = produtoService.acharOuFalhar(id);
 		String resultado = produtoRepository.buscarVendasPorUnidadeDeMedida(
 				produtoEncontrado.getDescricao(), produtoEncontrado.getUnidadeMedida());
 		
 		Integer valor = Integer.valueOf(resultado);
-		ProdutoUnidadeDeMedidaModel produtoModel = produtoOutputAssembler.toUnidadeDeMedidaModel(produtoEncontrado);
+		ProdutoUnidadeDeMedidaModel produtoModel = produtoOutputAssembler.toUnidadeDeMedidaModel(produtoEncontrado, uriInfo);
 		produtoModel.setVendasPorUnidadeMedida(valor);
 		
 		return produtoModel;
@@ -113,7 +116,7 @@ public class ProdutoController{
 	})
 	public ProdutoEmReaisModel listarVendasEmReais(
 			@Parameter(description = "Id da Produto", example = "1", required = true)
-			@PathParam("id") Long id) {
+			@PathParam("id") Long id, @Context UriInfo uriInfo) {
 		
 		Produto produtoEncontrado = produtoService.acharOuFalhar(id);
 		String resultado = produtoRepository.buscarVendasPorReais(
@@ -122,7 +125,7 @@ public class ProdutoController{
 		Double d = Double.valueOf(resultado);
 		BigDecimal valor = BigDecimal.valueOf(d).setScale(2);		
 		
-		ProdutoEmReaisModel produtoModel = produtoOutputAssembler.toReaisModel(produtoEncontrado);
+		ProdutoEmReaisModel produtoModel = produtoOutputAssembler.toReaisModel(produtoEncontrado, uriInfo);
 		produtoModel.setVendasEmReais(valor);
 		return produtoModel;	
 	}
@@ -138,14 +141,14 @@ public class ProdutoController{
 	})
 	public ProdutoEstoqueModel listarEmEstoque(
 			@Parameter(description = "Id da Produto", example = "1", required = true)
-			@PathParam("id") Long id) {
+			@PathParam("id") Long id, @Context UriInfo uriInfo) {
 		
 		Produto produtoEncontrado = produtoService.acharOuFalhar(id);
 		String resultado = produtoRepository.buscarTotalEmEstoque(
 				produtoEncontrado.getDescricao());
 		
 		Integer valor = Integer.valueOf(resultado);
-		ProdutoEstoqueModel produtoModel = produtoOutputAssembler.toEstoqueModel(produtoEncontrado);
+		ProdutoEstoqueModel produtoModel = produtoOutputAssembler.toEstoqueModel(produtoEncontrado, uriInfo);
 		produtoModel.setTotalEmEstoque(valor);
 		
 		return produtoModel;	
@@ -181,10 +184,10 @@ public class ProdutoController{
 			@Parameter(description = "Id da Produto", example = "1", required = true)
 			@PathParam("id") Long id,
 			@RequestBody(description = "Body", required = true)
-			ProdutoInput produtoInput) {
+			ProdutoInput produtoInput, @Context UriInfo uriInfo) {
 		produtoService.validarProdutoInput(produtoInput);
 		Produto produto = produtoService.atualizar(id, produtoInput);
-		ProdutoModel produtoModel = produtoOutputAssembler.toModel(produto);
+		ProdutoModel produtoModel = produtoOutputAssembler.toModel(produto, uriInfo);
 		return produtoModel;
 	}
 	
