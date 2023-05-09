@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 
+import org.edu.unidep.domain.model.FotoProduto;
 import org.edu.unidep.domain.model.Produto;
 import org.edu.unidep.domain.repository.ProdutoRepository;
 
@@ -20,8 +21,21 @@ public class ProdutoImpl implements PanacheRepository<Produto>, ProdutoRepositor
 	}
 
 	@Override
-	public Optional<Produto> buscarPessoaPeloCodigo(Long id) {
+	public Optional<Produto> buscarProdutoPeloCodigo(Long id) {
 		return findByIdOptional(id);
+	}
+	
+	@Override
+	public Optional<FotoProduto> buscarFotoProdutoPeloCodigo(Long produtoId) {
+			String jpql = """
+	                SELECT f FROM FotoProduto f join f.produto p WHERE p.id = :codigo
+	            """;
+
+	    return getEntityManager()
+	            .createQuery(jpql, FotoProduto.class)
+	            .setParameter("codigo", produtoId)
+	            .getResultStream()
+	            .findAny();
 	}
 
 	@Override

@@ -54,7 +54,7 @@ public class ProdutoService {
 	}
 	
 	public Produto acharOuFalhar(Long id) {
-		return produtoRepository.buscarPessoaPeloCodigo(id)
+		return produtoRepository.buscarProdutoPeloCodigo(id)
 				.orElseThrow(()-> new ProdutoNaoEncontradoException(id));
 	}
 }
