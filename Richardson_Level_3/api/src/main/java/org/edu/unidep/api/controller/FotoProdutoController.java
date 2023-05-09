@@ -20,8 +20,10 @@ import org.edu.unidep.domain.model.Produto;
 import org.edu.unidep.domain.repository.FotoStorageRepository;
 import org.edu.unidep.domain.service.FotoProdutoService;
 import org.edu.unidep.domain.service.ProdutoService;
+import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
-@Path("produtos/{produtoId}/foto")
+@Path("produtos/foto")
 public class FotoProdutoController {
 
 	@Inject
@@ -34,6 +36,7 @@ public class FotoProdutoController {
 	private ProdutoService produtoService;
 	
 	@GET
+	@Path("/produto/{produtoId}")
 	@Produces(MediaType.MULTIPART_FORM_DATA)
 	public Response recuperarFoto(@PathParam("produtoId") Long produtoId) {
 		FotoProduto foto = fotoProdutoService.acharOuFalhar(produtoId);
@@ -44,9 +47,11 @@ public class FotoProdutoController {
 	}
 	
 	@POST
+	@Path("/produto/{produtoId}")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public FotoProduto registrarFoto(@PathParam("produtoId") Long produtoId) throws IOException {
+	public FotoProduto registrarFoto(@PathParam("produtoId") Long produtoId,
+			@MultipartForm MultipartFormDataInput input) throws IOException {
 		Produto produto = produtoService.acharOuFalhar(produtoId);
 		FotoProdutoInput fotoProdutoInput = new FotoProdutoInput();
 		fotoProdutoInput.setDescricao("Maminha");
