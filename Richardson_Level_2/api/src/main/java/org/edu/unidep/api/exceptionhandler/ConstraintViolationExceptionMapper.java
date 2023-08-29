@@ -19,7 +19,9 @@ public class ConstraintViolationExceptionMapper implements ExceptionMapper<Const
 		Set<ExceptionMessage.FieldError> fieldErrors = new LinkedHashSet<>();
 		
 		for (ConstraintViolation<?> erro : exception.getConstraintViolations()) {
-			ExceptionMessage.FieldError e = new ExceptionMessage.FieldError(erro.getPropertyPath().toString(), erro.getMessage());
+			ExceptionMessage.FieldError e = new ExceptionMessage
+					.FieldError(erro.getPropertyPath().toString(), erro.getMessage());
+			
 			fieldErrors.add(e);
 		}
 		ExceptionMessage erro = new ExceptionMessage();
